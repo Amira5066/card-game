@@ -1,16 +1,13 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class Card extends JLabel implements MouseListener {
     private static ArrayList<JLabel> arrayOfCards;
@@ -21,6 +18,7 @@ public class Card extends JLabel implements MouseListener {
     private boolean found;
     private boolean faceUp;
     private static int cardsSeen = 0;
+    private static int pairsFound = 0;
 
     public Card(String cardName){
 
@@ -70,6 +68,9 @@ public class Card extends JLabel implements MouseListener {
         }
     }
     public void mouseClicked(MouseEvent e) {
+        if(pairsFound == Memory.getPairs()) {
+            Memory.endGame();
+        }
         repaintCard();
     }
 
@@ -96,6 +97,7 @@ public class Card extends JLabel implements MouseListener {
                             if(Board.getCard(i).getCardName().equals(Board.getCard(j).getCardName())){
                                 Board.getCard(i).found = true;
                                 Board.getCard(j).found = true;
+                                pairsFound++;
                                 break;
                             }
                             Board.getCard(i).changeFacing(false);
@@ -109,12 +111,23 @@ public class Card extends JLabel implements MouseListener {
                 }
             }
         }
-        if (this.faceUp == false) {
-            this.setIcon(imageIcon);
-            cardsSeen++;
-            this.faceUp = !this.faceUp;
-        }
+        cardsSeen++;
+        this.setIcon(imageIcon);
+        this.faceUp = !this.faceUp;
+    
         this.repaint();
+        if(pairsFound == Memory.getPairs() - 1) {
+            for(int i = 0; i < nrOfCards; i++){
+                if(Board.getCard(i).faceUp == false){
+                    return;
+                }
+            }
+            Memory.endGame();
+        }
+    }
+
+    public static int getPairsFound(){
+        return pairsFound;
     }
 
     public void changeFacing(boolean facing){

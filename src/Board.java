@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Board extends JPanel {
-    private int columns;
-    private int rows;
     private static final String[] cardName = {"clubs", "spades", "diamonds", "hearts"};
     private static ArrayList<Card> deck;
 
